@@ -37,6 +37,24 @@ describe('GET /api/articles/:article_id', () => {
             expect(body.article).toHaveProperty('article_img_url')
         })
     })
+    test('should return 404 Not found if given an article_id that does not exist',()=>{
+        return request(app)
+        .get('/api/articles/999')
+        // .expect(404)
+        .then((res) => {
+            console.log(res.body, '<<<<<2<<<<<<<<')
+            expect(res.body.message).toBe('Article does not exist')
+        })
+    })
+    test('should return 400 Bad Request if given an invalid id',()=>{
+        return request(app)
+        .get('/api/articles/notAnID')
+        .expect(400)
+        .then(({body})=>{
+            expect(body.message).toBe('Invalid ID')
+        })
+    })
+
 })
 describe('All wrong paths', () => {
     test('should return a 404, not found when an invalid path is entered', () => {

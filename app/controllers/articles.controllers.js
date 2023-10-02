@@ -6,4 +6,8 @@ exports.getArticleByID = (req, res, next) => {
     fetchArticleByID(article_id).then((article) => {
         res.status(200).send({article})
     })
+    .catch((err) => {
+        console.log(err, '<<<<<1<<<<<<')
+        next(err)
+    })
 }
