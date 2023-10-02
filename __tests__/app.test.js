@@ -21,6 +21,23 @@ describe('GET /api/topics', () => {
         })
     })
 })
+describe('GET /api', () => {
+    test('should return 200 status code and a JSON object describing all available endpoints', () => {
+        return request(app)
+        .get('/api')
+        .expect(200)
+        .then(({body}) => {
+            expect(Object.keys(body.endpoints).length).toBeGreaterThan(0)
+            expect(body.endpoints['GET /api']).toHaveProperty('description')
+            expect(body.endpoints['GET /api/topics']).toHaveProperty('description')
+            expect(body.endpoints['GET /api/topics']).toHaveProperty('queries')
+            expect(body.endpoints['GET /api/topics']).toHaveProperty('exampleResponse')
+            expect(body.endpoints['GET /api/articles']).toHaveProperty('description')
+            expect(body.endpoints['GET /api/articles']).toHaveProperty('queries')
+            expect(body.endpoints['GET /api/articles']).toHaveProperty('exampleResponse')
+        })
+    })
+})
 describe('All wrong paths', () => {
     test('should return a 404, not found when an invalid path is entered', () => {
         return request(app)
