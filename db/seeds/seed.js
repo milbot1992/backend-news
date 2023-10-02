@@ -1,5 +1,5 @@
 const format = require('pg-format');
-const db = require('../connection');
+const  {db} = require('../connection');
 const {
   convertTimestampToDate,
   createRef,
