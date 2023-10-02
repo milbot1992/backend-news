@@ -21,6 +21,23 @@ describe('GET /api/topics', () => {
         })
     })
 })
+describe('GET /api/articles/:article_id', () => {
+    test('should return 200 status code and an an article object with the correct id', () => {
+        return request(app)
+        .get('/api/articles/4')
+        .expect(200)
+        .then(({body}) => {
+            expect(body.article.article_id).toBe(4)
+            expect(body.article).toHaveProperty('author')
+            expect(body.article).toHaveProperty('title')
+            expect(body.article).toHaveProperty('body')
+            expect(body.article).toHaveProperty('topic')
+            expect(body.article).toHaveProperty('created_at')
+            expect(body.article).toHaveProperty('votes')
+            expect(body.article).toHaveProperty('article_img_url')
+        })
+    })
+})
 describe('All wrong paths', () => {
     test('should return a 404, not found when an invalid path is entered', () => {
         return request(app)
