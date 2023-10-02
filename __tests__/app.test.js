@@ -42,7 +42,6 @@ describe('GET /api/articles/:article_id', () => {
         .get('/api/articles/999')
         // .expect(404)
         .then((res) => {
-            console.log(res.body, '<<<<<2<<<<<<<<')
             expect(res.body.message).toBe('Article does not exist')
         })
     })
