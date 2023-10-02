@@ -8,12 +8,7 @@ beforeAll(()=>seed(data))
 afterAll(()=>db.end())
 
 describe('GET /api/topics', () => {
-    test('should return 200 status code', () => {
-        return request(app)
-        .get('/api/topics')
-        .expect(200)
-    })
-    test('should return an array of topics objects', () => {
+    test('should return 200 status code and an array of topics objects', () => {
         return request(app)
         .get('/api/topics')
         .expect(200)
@@ -25,6 +20,8 @@ describe('GET /api/topics', () => {
             })
         })
     })
+})
+describe('All wrong paths', () => {
     test('should return a 404, not found when an invalid path is entered', () => {
         return request(app)
         .get('/api/topic')
