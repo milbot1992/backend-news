@@ -3,6 +3,8 @@ const { getTopics } = require('./controllers/topics.controllers')
 const { getEndpoints } = require('./controllers/endpoints.controllers')
 const { handleServerErrors } = require('./controllers/errors.controllers')
 const { getArticles } = require('./controllers/articles.controllers')
+const { getCommentsForArticle } = require('./controllers/comments.controllers')
+
 
 const app = express()
 
@@ -11,6 +13,8 @@ app.get('/api/topics', getTopics)
 app.get('/api', getEndpoints)
 
 app.get('/api/articles', getArticles)
+
+app.get('/api/articles/:article_id/comments', getCommentsForArticle)
 
 app.all("/*", (req, res, next) => {
     res.status(404).send({ message: 'Path not found'})

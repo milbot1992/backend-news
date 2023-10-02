@@ -59,6 +59,25 @@ describe('GET /api/articles', () => {
         })
     })
 })
+describe('GET /api/articles/:article_id/comments', () => {
+    test('should return 200 status code and an array of comments for specified article', () => {
+        return request(app)
+        .get('/api/articles/3/comments')
+        .expect(200)
+        .then(({body}) => {
+            expect(body.comments).toHaveLength(2)
+            body.comments.forEach((comment)=>{
+                expect(comment).toHaveProperty('comment_id')
+                expect(comment).toHaveProperty('votes')
+                expect(comment).toHaveProperty('created_at')
+                expect(comment).toHaveProperty('author')
+                expect(comment).toHaveProperty('body')
+                expect(comment).toHaveProperty('article_id')
+            expect(body.comments).toBeSortedBy('created_at')
+            })
+        })
+    })
+})
 describe('All wrong paths', () => {
     test('should return a 404, not found when an invalid path is entered', () => {
         return request(app)
