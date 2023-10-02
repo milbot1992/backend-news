@@ -66,6 +66,7 @@ describe('GET /api/articles/:article_id/comments', () => {
         .expect(200)
         .then(({body}) => {
             expect(body.comments).toHaveLength(2)
+            expect(body.comments).toBeSortedBy('created_at')
             body.comments.forEach((comment)=>{
                 expect(comment).toHaveProperty('comment_id')
                 expect(comment).toHaveProperty('votes')
@@ -73,8 +74,23 @@ describe('GET /api/articles/:article_id/comments', () => {
                 expect(comment).toHaveProperty('author')
                 expect(comment).toHaveProperty('body')
                 expect(comment).toHaveProperty('article_id')
-            expect(body.comments).toBeSortedBy('created_at')
             })
+        })
+    })
+    test('should return 404 Not found if given an article_id that does not exist',()=>{
+        return request(app)
+        .get('/api/articles/999/comments')
+        .expect(404)
+        .then((res) => {
+            expect(res.body.message).toBe('Article does not exist')
+        })
+    })
+    test('should return 400 Bad Request if given an invalid id',()=>{
+        return request(app)
+        .get('/api/articles/notAnID/comments')
+        .expect(400)
+        .then(({body})=>{
+            expect(body.message).toBe('Invalid ID')
         })
     })
 })

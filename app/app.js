@@ -1,7 +1,7 @@
 const express = require('express')
 const { getTopics } = require('./controllers/topics.controllers')
 const { getEndpoints } = require('./controllers/endpoints.controllers')
-const { handleServerErrors } = require('./controllers/errors.controllers')
+const { handlePSQLErrors, handleCustomErrors, handleServerErrors } = require('./controllers/errors.controllers')
 const { getArticles } = require('./controllers/articles.controllers')
 const { getCommentsForArticle } = require('./controllers/comments.controllers')
 
@@ -21,6 +21,9 @@ app.all("/*", (req, res, next) => {
     })
 
 // Error handling
+app.use(handlePSQLErrors)
+app.use(handleCustomErrors)
 app.use(handleServerErrors)
+
 
 module.exports = app
