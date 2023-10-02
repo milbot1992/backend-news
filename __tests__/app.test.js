@@ -38,6 +38,27 @@ describe('GET /api', () => {
         })
     })
 })
+describe('GET /api/articles', () => {
+    test('should return 200 status code and an array of articles objects ordered by created_at descending', () => {
+        return request(app)
+        .get('/api/articles')
+        .expect(200)
+        .then(({body}) => {
+            expect(body.articles).toBeSortedBy('created_at', {descending: true})
+            body.articles.forEach((article)=>{
+                expect(article).toHaveProperty('author')
+                expect(article).toHaveProperty('title')
+                expect(article).toHaveProperty('article_id')
+                expect(article).toHaveProperty('topic')
+                expect(article).toHaveProperty('created_at')
+                expect(article).toHaveProperty('votes')
+                expect(article).toHaveProperty('article_img_url')
+                expect(article).toHaveProperty('comment_count')
+                expect(article).not.toHaveProperty('body')
+            })
+        })
+    })
+})
 describe('All wrong paths', () => {
     test('should return a 404, not found when an invalid path is entered', () => {
         return request(app)
