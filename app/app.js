@@ -4,6 +4,7 @@ const { getArticles, getArticleById, patchArticle } = require('./controllers/art
 const { getEndpoints } = require('./controllers/endpoints.controllers')
 const { getCommentsForArticle, postComments, deleteComment } = require('./controllers/comments.controllers')
 const { handlePSQLErrors, handleCustomErrors, handleServerErrors } = require('./controllers/errors.controllers')
+const { getUsers } = require('./controllers/users.controllers')
 
 
 
@@ -15,6 +16,7 @@ app.get('/api', getEndpoints)
 app.get('/api/articles', getArticles)
 app.get('/api/articles/:article_id', getArticleById)
 app.get('/api/articles/:article_id/comments', getCommentsForArticle)
+app.get('/api/users', getUsers)
 
 app.patch('/api/articles/:article_id', patchArticle)
 app.post('/api/articles/:article_id/comments', postComments)
