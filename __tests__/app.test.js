@@ -41,7 +41,7 @@ describe('GET /api/articles/:article_id', () => {
     test('should return 404 Not found if given an article_id that does not exist',()=>{
         return request(app)
         .get('/api/articles/999')
-        // .expect(404)
+        .expect(404)
         .then((res) => {
             expect(res.body.message).toBe('Article does not exist')
         })
@@ -144,6 +144,67 @@ describe('All wrong paths', () => {
         .expect(404)
         .then((response) => {
             expect(response.body.message).toBe('Path not found')
+        })
+    })
+})
+describe('PATCH /api/articles/:article_id',()=>{
+    test('should return the updated article object with a 201 status code when passed a positive inc_votes',()=>{
+        return request(app)
+        .patch('/api/articles/7')
+        .send({ inc_votes : 10 })
+        .expect(201).then((res)=>{
+            expect(res.body.article).toMatchObject({
+                                                    article_id: 7,
+                                                    title: "Z",
+                                                    topic: "mitch",
+                                                    author: "icellusedkars",
+                                                    body: "I was hungry.",
+                                                    created_at: "2020-01-07T14:08:00.000Z",
+                                                    votes: 10,
+                                                    article_img_url: "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+            })
+        })
+    })
+    test('should return the updated article object with a 201 status code  when passed a negative inc_votes',()=>{
+        return request(app)
+        .patch('/api/articles/5')
+        .send({ inc_votes : -10 })
+        .expect(201).then((res)=>{
+            expect(res.body.article).toMatchObject({
+                                                    article_id: 5,
+                                                    title: "UNCOVERED: catspiracy to bring down democracy",
+                                                    topic: "cats",
+                                                    author: "rogersop",
+                                                    body: "Bastet walks amongst us, and the cats are taking arms!",
+                                                    created_at: "2020-08-03T13:14:00.000Z",
+                                                    votes: -10,
+                                                    article_img_url: "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+                })
+        })
+    })
+    test('should return 404 Not found if given an id that does not exist',()=>{
+        return request(app)
+        .patch('/api/articles/999')
+        .send({ inc_votes : 100 })
+        .expect(404).then((res)=>{
+            expect(res.body.message).toBe('Article does not exist')
+        })
+    })
+    test('should return 400 Bad Request if given an invalid id',()=>{
+        return request(app)
+        .patch('/api/articles/notAnId')
+        .send({ inc_votes : 100 })
+        .expect(400).then((res)=>{
+            expect(res.body.message).toBe('Invalid ID')
+        })
+    })
+    test('should return a 400 Bad Request if the object passed is incorrectly formatted',()=>{
+        return request(app)
+        .patch('/api/articles/2')
+        .send({ inc : 100 })
+        .expect(400)
+        .then ((res)=>{
+            expect(res.body.message).toBe('Bad request, request missing required columns')
         })
     })
 })
