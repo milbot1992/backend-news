@@ -351,7 +351,8 @@ describe('DELETE /api/comments/:comment_id',()=>{
             expect(res.text).toBe('')
         return db.query('SELECT * FROM comments')
         .then((comments) => {
-            if(comments.length > 0) {
+            expect(comments.rows.length).toBe(19)
+            if(comments.rows.length > 0) {
                 comments.rows.forEach((comment)=>{
                     expect(comment.comment_id).not.toBe(18)
                 })
