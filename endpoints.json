@@ -30,16 +30,28 @@
     "description": "serves an array of all comments for specified article, ordered by date ascending",
     "queries": ["author", "topic", "sort_by", "order"],
     "exampleResponse": {
-      "comments": [
-        {
+      "comments": [{
           "comment_id": 10,
           "body": "git push origin master",
           "article_id": 3,
           "author": "icellusedkars",
           "votes": 0,
           "created_at": "2020-06-20T07:24:00.000Z"
-        }
-      ]
+      }]
+    }
+  },
+  "GET /api/articles/:article_id": {
+    "description": "serves an object containing the specified article",
+    "queries": ["author", "topic", "sort_by", "order"],
+    "exampleResponse": {
+          "title": "Seafood substitutions are increasing",
+          "topic": "cooking",
+          "author": "weegembump",
+          "body": "Text from the article..",
+          "created_at": "2018-05-30T15:59:13.341Z",
+          "votes": 0,
+          "comment_count": 6
     }
   }
-}
+} 
+
