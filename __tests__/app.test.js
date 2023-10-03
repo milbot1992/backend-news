@@ -3,6 +3,7 @@ const app = require('../app/app')
 const request = require('supertest')
 const seed = require('../db/seeds/seed.js')
 const data = require('../db/data/test-data')
+const { expect } = require('@jest/globals')
 
 beforeAll(()=>seed(data))
 afterAll(()=>db.end())
@@ -71,6 +72,71 @@ describe('GET /api', () => {
         })
     })
 })
+describe('GET /api/articles', () => {
+    test('should return 200 status code and an array of articles objects ordered by created_at descending', () => {
+        return request(app)
+        .get('/api/articles')
+        .expect(200)
+        .then(({body}) => {
+            expect(body.articles).toBeSortedBy('created_at', {descending: true})
+            body.articles.forEach((article)=>{
+                expect(article).toMatchObject({author: expect.any(String),
+                                            title: expect.any(String),
+                                            article_id: expect.any(Number),
+                                            topic: expect.any(String),
+                                            created_at: expect.any(String),
+                                            votes: expect.any(Number),
+                                            article_img_url: expect.any(String),
+                                            comment_count: expect.any(String),
+                                        })
+            })
+        })
+    })
+})
+describe('GET /api/articles/:article_id/comments', () => {
+    test('should return 200 status code and an array of comments for specified article', () => {
+        return request(app)
+        .get('/api/articles/3/comments')
+        .expect(200)
+        .then(({body}) => {
+            expect(body.comments).toHaveLength(2)
+            expect(body.comments).toBeSortedBy('created_at')
+            body.comments.forEach((comment)=>{
+                expect(comment).toHaveProperty('comment_id')
+                expect(comment).toHaveProperty('votes')
+                expect(comment).toHaveProperty('created_at')
+                expect(comment).toHaveProperty('author')
+                expect(comment).toHaveProperty('body')
+                expect(comment).toHaveProperty('article_id')
+            })
+        })
+    })
+    test('should return 200 status code and an empty array for valid article with no comments', () => {
+        return request(app)
+        .get('/api/articles/2/comments')
+        .expect(200)
+        .then(({body}) => {
+            expect(body.comments).toHaveLength(0)
+            expect(body.comments).toEqual([])
+        })
+    })
+    test('should return 404 Not found if given an article_id that does not exist',()=>{
+        return request(app)
+        .get('/api/articles/999/comments')
+        .expect(404)
+        .then((res) => {
+            expect(res.body.message).toBe('Article not found')
+        })
+    })
+    test('should return 400 Bad Request if given an invalid id',()=>{
+        return request(app)
+        .get('/api/articles/notAnID/comments')
+        .expect(400)
+        .then(({body})=>{
+            expect(body.message).toBe('Invalid ID')
+        })
+    })
+})
 describe('All wrong paths', () => {
     test('should return a 404, not found when an invalid path is entered', () => {
         return request(app)
@@ -81,7 +147,6 @@ describe('All wrong paths', () => {
         })
     })
 })
-
 describe('POST /api/articles/:article_id/comments', () => {
     test('should return 201 status code and return the new posted comment', () => {
         const newComment = {
