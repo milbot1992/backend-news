@@ -43,7 +43,7 @@ describe('GET /api/articles/:article_id', () => {
         .get('/api/articles/999')
         .expect(404)
         .then((res) => {
-            expect(res.body.message).toBe('Article does not exist')
+            expect(res.body.message).toBe('Article not found')
         })
     })
     test('should return 400 Bad Request if given an invalid id',()=>{
@@ -125,7 +125,7 @@ describe('GET /api/articles/:article_id/comments', () => {
         .get('/api/articles/999/comments')
         .expect(404)
         .then((res) => {
-            expect(res.body.message).toBe('Article does not exist')
+            expect(res.body.message).toBe('Article not found')
         })
     })
     test('should return 400 Bad Request if given an invalid id',()=>{
@@ -182,15 +182,32 @@ describe('PATCH /api/articles/:article_id',()=>{
                 })
         })
     })
-    test('should return 404 Not found if given an id that does not exist',()=>{
+    test('should return the updated article object with a 201 status code when passed a request with extra properties',()=>{
+        return request(app)
+        .patch('/api/articles/4')
+        .send({ inc_votes : 10,
+                extra_field: "extra value"})
+        .expect(201).then((res)=>{
+            expect(res.body.article).toMatchObject({
+                                                    article_id: 4,
+                                                    title: "Student SUES Mitch!",
+                                                    topic: "mitch",
+                                                    author: "rogersop",
+                                                    body: "We all love Mitch and his wonderful, unique typing style. However, the volume of his typing has ALLEGEDLY burst another students eardrums, and they are now suing for damages",
+                                                    created_at: "2020-05-06T01:14:00.000Z",
+                                                    votes: 10,
+                                                    article_img_url: "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",            })
+        })
+    })
+    test('should return 404 Not found if given an article_id that does not exist',()=>{
         return request(app)
         .patch('/api/articles/999')
         .send({ inc_votes : 100 })
         .expect(404).then((res)=>{
-            expect(res.body.message).toBe('Article does not exist')
+            expect(res.body.message).toBe('Article not found')
         })
     })
-    test('should return 400 Bad Request if given an invalid id',()=>{
+    test('should return 400 Bad Request if given an invalid article_id',()=>{
         return request(app)
         .patch('/api/articles/notAnId')
         .send({ inc_votes : 100 })
@@ -198,10 +215,19 @@ describe('PATCH /api/articles/:article_id',()=>{
             expect(res.body.message).toBe('Invalid ID')
         })
     })
-    test('should return a 400 Bad Request if the object passed is incorrectly formatted',()=>{
+    test('should return a 400 Bad Request if the object passed is incorrectly formatted - wrong field name',()=>{
         return request(app)
         .patch('/api/articles/2')
         .send({ inc : 100 })
+        .expect(400)
+        .then ((res)=>{
+            expect(res.body.message).toBe('Bad request, request missing required columns')
+        })
+    })
+    test('should return a 400 Bad Request if the object passed is incorrectly formatted - missing field name',()=>{
+        return request(app)
+        .patch('/api/articles/2')
+        .send({})
         .expect(400)
         .then ((res)=>{
             expect(res.body.message).toBe('Bad request, request missing required columns')

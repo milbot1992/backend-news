@@ -20,7 +20,7 @@ exports.fetchArticleById = (article_id) => {
 
     .then(({rows}) => {
         if(rows.length === 0) {
-            return Promise.reject( { status: 404, message: 'Article does not exist' } )
+            return Promise.reject( { status: 404, message: 'Article not found' } )
         }
         return rows[0]
     })
@@ -34,7 +34,7 @@ exports.updateArticle = (article_id,changeVotesBy) => {
     RETURNING *;
     `, [changeVotesBy,article_id]).then((result)=>{
         if(result.rows.length === 0){
-            return Promise.reject({ status: 404, message: 'Article does not exist' })
+            return Promise.reject({ status: 404, message: 'Article not found' })
         }
         return result.rows[0]
     })
