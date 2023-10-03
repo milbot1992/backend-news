@@ -40,7 +40,7 @@
     }
   },
   "POST /api/articles/:article_id/comments": {
-    "description": "posts a new comments and returns an object containing the posted comment",
+    "description": "posts a new comment and returns an object containing the posted comment",
     "format": ["username", "body"],
     "exampleResponse": {
       "comment_id": 19,
