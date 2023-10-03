@@ -50,5 +50,11 @@ You are now connected to database "nc_news_test" as user "millie".
          15 | I am 100% sure that we're not completely sure.                                                                                                                                       |          5 | butter_bridge |     1 | 2020-11-24 00:08:00
          16 | This is a bad article name                                                                                                                                                           |          6 | butter_bridge |     1 | 2020-10-11 16:23:00
          17 | The owls are not what they seem.                                                                                                                                                     |          9 | icellusedkars |    20 | 2020-03-14 17:02:00
-(17 rows)
+         18 | This morning, I showered for nine minutes.                                                                                                                                           |          1 | butter_bridge |    16 | 2020-07-21 01:20:00
+(18 rows)
+
+  author  |        title        |                                                                                     body                                                                                      | topic |     created_at      | votes |                                            article_img_url                                            | comment_count 
+----------+---------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+-------+---------------------+-------+-------------------------------------------------------------------------------------------------------+---------------
+ rogersop | Student SUES Mitch! | We all love Mitch and his wonderful, unique typing style. However, the volume of his typing has ALLEGEDLY burst another students eardrums, and they are now suing for damages | mitch | 2020-05-06 02:14:00 |     0 | https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700 |             0
+(1 row)
 

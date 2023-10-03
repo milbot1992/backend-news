@@ -29,13 +29,17 @@ describe('GET /api/articles/:article_id', () => {
         .expect(200)
         .then(({body}) => {
             expect(body.article.article_id).toBe(4)
-            expect(body.article).toHaveProperty('author')
-            expect(body.article).toHaveProperty('title')
-            expect(body.article).toHaveProperty('body')
-            expect(body.article).toHaveProperty('topic')
-            expect(body.article).toHaveProperty('created_at')
-            expect(body.article).toHaveProperty('votes')
-            expect(body.article).toHaveProperty('article_img_url')
+            // Query on whether the below would be better as a specific article object for article with id 4?
+            expect(body.article).toMatchObject({article_id: expect.any(Number),
+                                            author: expect.any(String),
+                                            title: expect.any(String),
+                                            body: expect.any(String),
+                                            topic: expect.any(String),
+                                            created_at: expect.any(String),
+                                            votes: expect.any(Number),
+                                            article_img_url: expect.any(String),
+                                            comment_count: expect.any(String),
+                                        })
         })
     })
     test('should return 404 Not found if given an article_id that does not exist',()=>{
