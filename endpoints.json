@@ -77,7 +77,10 @@
       "author": "butter_bridge",
       "votes": 0,
       "created_at": "2018-05-30T15:59:13.341Z"
-    }
+  }
+  },
+  "DELETE /api/comments/:comment_id": {
+    "description": "deletes specified comment and returns no content"
   }
 } 
 
