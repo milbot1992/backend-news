@@ -147,6 +147,94 @@ describe('All wrong paths', () => {
         })
     })
 })
+describe('PATCH /api/articles/:article_id',()=>{
+    test('should return the updated article object with a 201 status code when passed a positive inc_votes',()=>{
+        return request(app)
+        .patch('/api/articles/7')
+        .send({ inc_votes : 10 })
+        .expect(201).then((res)=>{
+            expect(res.body.article).toMatchObject({
+                                                    article_id: 7,
+                                                    title: "Z",
+                                                    topic: "mitch",
+                                                    author: "icellusedkars",
+                                                    body: "I was hungry.",
+                                                    created_at: "2020-01-07T14:08:00.000Z",
+                                                    votes: 10,
+                                                    article_img_url: "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+            })
+        })
+    })
+    test('should return the updated article object with a 201 status code  when passed a negative inc_votes',()=>{
+        return request(app)
+        .patch('/api/articles/5')
+        .send({ inc_votes : -10 })
+        .expect(201).then((res)=>{
+            expect(res.body.article).toMatchObject({
+                                                    article_id: 5,
+                                                    title: "UNCOVERED: catspiracy to bring down democracy",
+                                                    topic: "cats",
+                                                    author: "rogersop",
+                                                    body: "Bastet walks amongst us, and the cats are taking arms!",
+                                                    created_at: "2020-08-03T13:14:00.000Z",
+                                                    votes: -10,
+                                                    article_img_url: "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+                })
+        })
+    })
+    test('should return the updated article object with a 201 status code when passed a request with extra properties',()=>{
+        return request(app)
+        .patch('/api/articles/4')
+        .send({ inc_votes : 10,
+                extra_field: "extra value"})
+        .expect(201).then((res)=>{
+            expect(res.body.article).toMatchObject({
+                                                    article_id: 4,
+                                                    title: "Student SUES Mitch!",
+                                                    topic: "mitch",
+                                                    author: "rogersop",
+                                                    body: "We all love Mitch and his wonderful, unique typing style. However, the volume of his typing has ALLEGEDLY burst another students eardrums, and they are now suing for damages",
+                                                    created_at: "2020-05-06T01:14:00.000Z",
+                                                    votes: 10,
+                                                    article_img_url: "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",            })
+        })
+    })
+    test('should return 404 Not found if given an article_id that does not exist',()=>{
+        return request(app)
+        .patch('/api/articles/999')
+        .send({ inc_votes : 100 })
+        .expect(404).then((res)=>{
+            expect(res.body.message).toBe('Article not found')
+        })
+    })
+    test('should return 400 Bad Request if given an invalid article_id',()=>{
+        return request(app)
+        .patch('/api/articles/notAnId')
+        .send({ inc_votes : 100 })
+        .expect(400).then((res)=>{
+            expect(res.body.message).toBe('Invalid ID')
+        })
+    })
+    test('should return a 400 Bad Request if the object passed is incorrectly formatted - wrong field name',()=>{
+        return request(app)
+        .patch('/api/articles/2')
+        .send({ inc : 100 })
+        .expect(400)
+        .then ((res)=>{
+            expect(res.body.message).toBe('Bad request, request missing required columns')
+        })
+    })
+    test('should return a 400 Bad Request if the object passed is incorrectly formatted - missing field name',()=>{
+        return request(app)
+        .patch('/api/articles/2')
+        .send({})
+        .expect(400)
+        .then ((res)=>{
+            expect(res.body.message).toBe('Bad request, request missing required columns')
+        })
+    })
+})
+
 describe('POST /api/articles/:article_id/comments', () => {
     test('should return 201 status code and return the new posted comment', () => {
         const newComment = {
@@ -239,7 +327,7 @@ describe('POST /api/articles/:article_id/comments', () => {
         .then ((res)=>{
             expect(res.body.message).toBe('Bad request, request missing required columns')
         })
-    })
+    }) 
     test('should return a 404 Not Found if the object passed has bad values - username must appear in users table to be accepted',()=>{
         const newComment = {
             username: 'milbot1992',
@@ -254,3 +342,4 @@ describe('POST /api/articles/:article_id/comments', () => {
         })
     })
 })
+
