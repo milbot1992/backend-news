@@ -46,15 +46,15 @@ describe('GET /api/articles', () => {
         .then(({body}) => {
             expect(body.articles).toBeSortedBy('created_at', {descending: true})
             body.articles.forEach((article)=>{
-                expect(article).toHaveProperty('author')
-                expect(article).toHaveProperty('title')
-                expect(article).toHaveProperty('article_id')
-                expect(article).toHaveProperty('topic')
-                expect(article).toHaveProperty('created_at')
-                expect(article).toHaveProperty('votes')
-                expect(article).toHaveProperty('article_img_url')
-                expect(article).toHaveProperty('comment_count')
-                expect(article).not.toHaveProperty('body')
+                expect(article).toMatchObject({author: expect.any(String),
+                                            title: expect.any(String),
+                                            article_id: expect.any(Number),
+                                            topic: expect.any(String),
+                                            created_at: expect.any(String),
+                                            votes: expect.any(Number),
+                                            article_img_url: expect.any(String),
+                                            comment_count: expect.any(String),
+                                        })
             })
         })
     })
@@ -75,6 +75,15 @@ describe('GET /api/articles/:article_id/comments', () => {
                 expect(comment).toHaveProperty('body')
                 expect(comment).toHaveProperty('article_id')
             })
+        })
+    })
+    test('should return 200 status code and an empty array for valid article with no comments', () => {
+        return request(app)
+        .get('/api/articles/2/comments')
+        .expect(200)
+        .then(({body}) => {
+            expect(body.comments).toHaveLength(0)
+            expect(body.comments).toEqual([])
         })
     })
     test('should return 404 Not found if given an article_id that does not exist',()=>{
