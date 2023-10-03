@@ -150,7 +150,7 @@ describe('POST /api/articles/:article_id/comments', () => {
             expect(body.message).toBe('Invalid ID')
         })
     })
-    test('should return a 400 Bad Request if the object passed is incorrectly formatted',()=>{
+    test('should return a 400 Bad Request if the object passed is incorrectly formatted - key is name rather than username',()=>{
         const newComment = {
             name: 'butter_bridge',
             body: 'great article'
@@ -163,9 +163,9 @@ describe('POST /api/articles/:article_id/comments', () => {
             expect(res.body.message).toBe('Bad request, request missing required columns')
         })
     })
-    test('should return a 400 Bad Request if the object passed is missing required properties',()=>{
+    test('should return a 400 Bad Request if the object passed is missing required properties - missing key body',()=>{
         const newComment = {
-            name: 'butter_bridge',
+            username: 'butter_bridge',
             }
         return request(app)
         .post('/api/articles/1/comments')
