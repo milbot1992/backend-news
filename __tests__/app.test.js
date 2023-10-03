@@ -3,6 +3,7 @@ const app = require('../app/app')
 const request = require('supertest')
 const seed = require('../db/seeds/seed.js')
 const data = require('../db/data/test-data')
+const { expect } = require('@jest/globals')
 
 beforeAll(()=>seed(data))
 afterAll(()=>db.end())
@@ -68,6 +69,27 @@ describe('GET /api', () => {
             expect(body.endpoints['GET /api/articles']).toHaveProperty('description')
             expect(body.endpoints['GET /api/articles']).toHaveProperty('queries')
             expect(body.endpoints['GET /api/articles']).toHaveProperty('exampleResponse')
+        })
+    })
+})
+describe('GET /api/articles', () => {
+    test('should return 200 status code and an array of articles objects ordered by created_at descending', () => {
+        return request(app)
+        .get('/api/articles')
+        .expect(200)
+        .then(({body}) => {
+            expect(body.articles).toBeSortedBy('created_at', {descending: true})
+            body.articles.forEach((article)=>{
+                expect(article).toMatchObject({author: expect.any(String),
+                                            title: expect.any(String),
+                                            article_id: expect.any(Number),
+                                            topic: expect.any(String),
+                                            created_at: expect.any(String),
+                                            votes: expect.any(Number),
+                                            article_img_url: expect.any(String),
+                                            comment_count: expect.any(String),
+                                        })
+            })
         })
     })
 })
