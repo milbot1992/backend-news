@@ -1,10 +1,31 @@
 const { fetchArticles, fetchArticleById, updateArticle } = require('../models/articles.models')
+const { fetchTopics } = require('../models/topics.models')
 
 exports.getArticles = (req, res, next) => {
     const { topic } = req.query
 
     fetchArticles(topic).then((articles) => {
         res.status(200).send({articles})
+    })
+    .catch((err) => {
+        next(err)
+    })
+}
+
+exports.getArticles = (req, res, next) => {
+    const { topic } = req.query
+
+    Promise.all([
+        fetchArticles(topic),
+        topic && fetchTopics(topic)
+    ])
+    .then((results) => {
+        const [articles, topic] = results
+        if( topic && articles.length ===0 ) {
+            res.status(200).send({articles: []})
+        } else {
+            res.status(200).send({articles})
+        }
     })
     .catch((err) => {
         next(err)
