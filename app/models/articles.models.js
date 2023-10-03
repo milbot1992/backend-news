@@ -1,15 +1,30 @@
 const { db } = require('../../db/connection')
 
 exports.fetchArticles = (topic) => {
-    return db.query (   `SELECT
-                        articles.author, articles.title, articles.article_id, articles.topic,
-                        articles.created_at, articles.votes, articles.article_img_url,
-                        COUNT(comments.comment_id) AS comment_count
-                        FROM articles
-                        LEFT JOIN comments ON comments.article_id = articles.article_id
-                        GROUP BY articles.author, articles.title, articles.article_id, articles.topic,
-                        articles.created_at, articles.votes, articles.article_img_url
-                        ORDER BY articles.created_at DESC;`)
+    const validTopics = {
+        mitch: 'mitch',
+        cats: 'cats'
+    }
+    if(topic !== undefined && !(topic in validTopics)) {
+        return Promise.reject({ status: 400, message: `Invalid topic query entered: ${topic}`})
+    }
+    let query = `SELECT
+                articles.author, articles.title, articles.article_id, articles.topic,
+                articles.created_at, articles.votes, articles.article_img_url,
+                COUNT(comments.comment_id) AS comment_count
+                FROM articles
+                LEFT JOIN comments ON comments.article_id = articles.article_id`
+    const values = []
+
+    if(topic !== undefined) {
+        query += ' WHERE topic = $1'
+        values.push(topic)
+    }
+    query += ` GROUP BY articles.author, articles.title, articles.article_id, articles.topic,
+                articles.created_at, articles.votes, articles.article_img_url
+                ORDER BY articles.created_at DESC;`
+
+    return db.query (query, values)
     .then(({rows}) => {
         return rows
     })

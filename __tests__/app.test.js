@@ -92,6 +92,24 @@ describe('GET /api/articles', () => {
             })
         })
     })
+    test('should return an array of only articles of a certain specified topic - cats', () => {
+        return request(app)
+        .get('/api/articles?topic=cats')
+        .expect(200)
+        .then(({body}) => {
+            body.articles.forEach((article)=>{
+                expect(article.topic).toBe('cats')
+        })
+    })
+    })
+    test('should return a 400, bad request when an invalid topic query is entered - dogs', () => {
+        return request(app)
+        .get('/api/articles?topic=dogs')
+        .expect(400)
+        .then((response) => {
+            expect(response.body.message).toBe('Invalid topic query entered: dogs')
+        })
+    })
 })
 describe('GET /api/articles/:article_id/comments', () => {
     test('should return 200 status code and an array of comments for specified article', () => {
