@@ -46,7 +46,7 @@ describe('GET /api/articles/:article_id', () => {
             expect(res.body.message).toBe('Article not found')
         })
     })
-    test('should return 400 Bad Request if given an invalid id',()=>{
+    test('should return 400 Bad Request if given an invalid article_id',()=>{
         return request(app)
         .get('/api/articles/notAnID')
         .expect(400)
@@ -129,7 +129,7 @@ describe('GET /api/articles/:article_id/comments', () => {
             expect(res.body.message).toBe('Article not found')
         })
     })
-    test('should return 400 Bad Request if given an invalid id',()=>{
+    test('should return 400 Bad Request if given an invalid article_id',()=>{
         return request(app)
         .get('/api/articles/notAnID/comments')
         .expect(400)
@@ -359,4 +359,36 @@ describe('GET /api/users', () => {
         })
     })
 })
-
+describe('DELETE /api/comments/:comment_id',()=>{
+    test('should return a 204 status code and no content - specified comment_id should be deleted from comments table',()=>{
+        return request(app)
+        .delete('/api/comments/18')
+        .expect(204)
+        .then((res)=>{
+            expect(res.text).toBe('')
+        return db.query('SELECT * FROM comments')
+        .then((comments) => {
+            expect(comments.rows.length).toBe(19)
+            if(comments.rows.length > 0) {
+                comments.rows.forEach((comment)=>{
+                    expect(comment.comment_id).not.toBe(18)
+                })
+            }
+        })
+        })
+    })
+    test('should return a 404 if given a comment_id that does not exist',()=>{
+        return request(app)
+        .delete('/api/comments/999')
+        .expect(404).then(({body})=>{
+            expect(body.message).toBe('Comment not found')
+        })
+    })
+    test('should return a 400 if given an invalid comment_id',()=>{
+        return request(app)
+        .delete('/api/comments/notAnId')
+        .expect(400).then(({body})=>{
+            expect(body.message).toBe('Invalid ID')
+        })
+    })
+})
