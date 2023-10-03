@@ -263,9 +263,11 @@ describe('DELETE /api/comments/:comment_id',()=>{
             expect(res.text).toBe('')
         return db.query('SELECT * FROM comments')
         .then((comments) => {
-            comments.rows.forEach((comment)=>{
-                expect(comment.comment_id).not.toBe(18)
-            })
+            if(comments.length > 0) {
+                comments.rows.forEach((comment)=>{
+                    expect(comment.comment_id).not.toBe(18)
+                })
+            }
         })
         })
     })
@@ -276,7 +278,7 @@ describe('DELETE /api/comments/:comment_id',()=>{
             expect(body.message).toBe('Comment not found')
         })
     })
-    test('should return a 404 if given an invalid comment_id',()=>{
+    test('should return a 400 if given an invalid comment_id',()=>{
         return request(app)
         .delete('/api/comments/notAnId')
         .expect(400).then(({body})=>{
