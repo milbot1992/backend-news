@@ -103,7 +103,7 @@ describe('POST /api/articles/:article_id/comments', () => {
                                                     })
         })
     });
-    test('should return 201 status code and return the new posted comment', () => {
+    test('should return 201 status code and return the new posted comment when passed a request with an extra field', () => {
         const newComment = {
                             username: 'butter_bridge',
                             body: 'amazing article',
