@@ -52,6 +52,18 @@
           "votes": 0,
           "comment_count": 6
     }
+  },
+  "POST /api/articles/:article_id/comments": {
+    "description": "posts a new comment and returns an object containing the posted comment",
+    "format": ["username", "body"],
+    "exampleResponse": {
+      "comment_id": 19,
+      "body": "great article",
+      "article_id": 1,
+      "author": "butter_bridge",
+      "votes": 0,
+      "created_at": "2018-05-30T15:59:13.341Z"
+  }
   }
 } 
 

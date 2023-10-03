@@ -1,5 +1,16 @@
-const { fetchCommentsForArticle } = require('../models/comments.models')
+const { fetchCommentsForArticle, insertComments } = require('../models/comments.models')
 const { fetchArticleById } = require('../models/articles.models')
+
+exports.postComments = (req, res, next) => {
+    const newComment = req.body
+    const { article_id } = req.params  
+    insertComments(newComment, article_id).then((comment) => {
+        res.status(201).send({comment})
+    })
+    .catch((err)=>{
+        next(err);
+    })
+}
 
 exports.getCommentsForArticle = (req, res, next) => {
     const { article_id } = req.params
