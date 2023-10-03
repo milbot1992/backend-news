@@ -42,7 +42,7 @@ describe('GET /api/articles/:article_id', () => {
         .get('/api/articles/999')
         .expect(404)
         .then((res) => {
-            expect(res.body.message).toBe('Article does not exist')
+            expect(res.body.message).toBe('Article not found')
         })
     })
     test('should return 400 Bad Request if given an invalid id',()=>{
@@ -103,7 +103,28 @@ describe('POST /api/articles/:article_id/comments', () => {
                                                     })
         })
     });
-    test('should return 400 Bad Request if given an article_id that does not exist',()=>{
+    test('should return 201 status code and return the new posted comment', () => {
+        const newComment = {
+                            username: 'butter_bridge',
+                            body: 'amazing article',
+                            extraKey: 'extraValue'
+                            }
+        return request(app)
+        .post('/api/articles/2/comments')
+        .send(newComment)
+        .expect(201)
+        .then((res) => {
+            expect(res.body.comment).toMatchObject({
+                                                        comment_id: 20,
+                                                        body: 'amazing article',
+                                                        article_id: 2,
+                                                        author: 'butter_bridge',
+                                                        votes: 0,
+                                                        created_at: expect.any(String)
+                                                    })
+        })
+    });
+    test('should return 404 Not Found if given an article_id that does not exist',()=>{
         const newComment = {
             username: 'butter_bridge',
             body: 'great article'
@@ -111,9 +132,9 @@ describe('POST /api/articles/:article_id/comments', () => {
         return request(app)
         .post('/api/articles/999/comments')
         .send(newComment)
-        .expect(400)
+        .expect(404)
         .then((res) => {
-            expect(res.body.message).toBe('Bad request')
+            expect(res.body.message).toBe('Not found')
         })
     })
     test('should return 400 Bad Request if given an invalid article_id',()=>{
@@ -129,7 +150,7 @@ describe('POST /api/articles/:article_id/comments', () => {
             expect(body.message).toBe('Invalid ID')
         })
     })
-    test('should return a 406 Not acceptable if the object passed is incorrectly formatted',()=>{
+    test('should return a 400 Bad Request if the object passed is incorrectly formatted',()=>{
         const newComment = {
             name: 'butter_bridge',
             body: 'great article'
@@ -137,12 +158,24 @@ describe('POST /api/articles/:article_id/comments', () => {
         return request(app)
         .post('/api/articles/1/comments')
         .send(newComment)
-        .expect(406)
+        .expect(400)
         .then ((res)=>{
-            expect(res.body.message).toBe('Not acceptable, request missing required columns')
+            expect(res.body.message).toBe('Bad request, request missing required columns')
         })
     })
-    test('should return a 400 Bad request if the object passed has bad values - username must appear in users table to be accepted',()=>{
+    test('should return a 400 Bad Request if the object passed is missing required properties',()=>{
+        const newComment = {
+            name: 'butter_bridge',
+            }
+        return request(app)
+        .post('/api/articles/1/comments')
+        .send(newComment)
+        .expect(400)
+        .then ((res)=>{
+            expect(res.body.message).toBe('Bad request, request missing required columns')
+        })
+    })
+    test('should return a 404 Not Found if the object passed has bad values - username must appear in users table to be accepted',()=>{
         const newComment = {
             username: 'milbot1992',
             body: 'fab article'
@@ -150,9 +183,9 @@ describe('POST /api/articles/:article_id/comments', () => {
         return request(app)
         .post('/api/articles/1/comments')
         .send(newComment)
-        .expect(400)
+        .expect(404)
         .then ((res)=>{
-            expect(res.body.message).toBe('Bad request')
+            expect(res.body.message).toBe('Not found')
         })
     })
 })

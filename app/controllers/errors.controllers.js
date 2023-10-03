@@ -3,10 +3,10 @@ exports.handlePSQLErrors = (err, req, res, next) => {
         res.status(400).send({ message: 'Invalid ID' })
     }
     if (err.code === '23502') {
-        res.status(406).send({ message: 'Not acceptable, request missing required columns' })
+        res.status(400).send({ message: 'Bad request, request missing required columns' })
     }
     if (err.code === '23503') {
-        res.status(400).send({ message: 'Bad request' })
+        res.status(404).send({ message: 'Not found' })
     }
     next(err)
 }
