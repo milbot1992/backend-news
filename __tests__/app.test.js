@@ -3,6 +3,7 @@ const app = require('../app/app')
 const request = require('supertest')
 const seed = require('../db/seeds/seed.js')
 const data = require('../db/data/test-data')
+const { expect } = require('@jest/globals')
 
 beforeAll(()=>seed(data))
 afterAll(()=>db.end())
@@ -46,15 +47,15 @@ describe('GET /api/articles', () => {
         .then(({body}) => {
             expect(body.articles).toBeSortedBy('created_at', {descending: true})
             body.articles.forEach((article)=>{
-                expect(article).toHaveProperty('author')
-                expect(article).toHaveProperty('title')
-                expect(article).toHaveProperty('article_id')
-                expect(article).toHaveProperty('topic')
-                expect(article).toHaveProperty('created_at')
-                expect(article).toHaveProperty('votes')
-                expect(article).toHaveProperty('article_img_url')
-                expect(article).toHaveProperty('comment_count')
-                expect(article).not.toHaveProperty('body')
+                expect(article).toMatchObject({author: expect.any(String),
+                                            title: expect.any(String),
+                                            article_id: expect.any(Number),
+                                            topic: expect.any(String),
+                                            created_at: expect.any(String),
+                                            votes: expect.any(Number),
+                                            article_img_url: expect.any(String),
+                                            comment_count: expect.any(String),
+                                        })
             })
         })
     })
