@@ -78,6 +78,17 @@
       "votes": 0,
       "created_at": "2018-05-30T15:59:13.341Z"
     }
+  },
+  "GET /api/users": {
+    "description": "serves an array of all users",
+    "queries": [],
+    "exampleResponse": {
+      "topics": [{
+                  "username": "butter_bridge",
+                  "name": "jonny",
+                  "avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+      }]
+    }
   }
 } 
 

@@ -102,12 +102,13 @@ describe('GET /api/articles/:article_id/comments', () => {
             expect(body.comments).toHaveLength(2)
             expect(body.comments).toBeSortedBy('created_at')
             body.comments.forEach((comment)=>{
-                expect(comment).toHaveProperty('comment_id')
-                expect(comment).toHaveProperty('votes')
-                expect(comment).toHaveProperty('created_at')
-                expect(comment).toHaveProperty('author')
-                expect(comment).toHaveProperty('body')
-                expect(comment).toHaveProperty('article_id')
+                expect(comment).toMatchObject({comment_id: expect.any(Number),
+                                            votes: expect.any(Number),
+                                            created_at: expect.any(String),
+                                            author: expect.any(String),
+                                            body: expect.any(String),
+                                            article_id: expect.any(Number)
+                                        })
             })
         })
     })
@@ -339,6 +340,22 @@ describe('POST /api/articles/:article_id/comments', () => {
         .expect(404)
         .then ((res)=>{
             expect(res.body.message).toBe('Not found')
+        })
+    })
+})
+describe('GET /api/users', () => {
+    test('should return 200 status code and an array of users objects', () => {
+        return request(app)
+        .get('/api/users')
+        .expect(200)
+        .then(({body}) => {
+            expect(body.users).toHaveLength(4)
+            body.users.forEach((user)=>{
+                expect(user).toMatchObject({username: expect.any(String),
+                                            name: expect.any(String),
+                                            avatar_url: expect.any(String)
+                                        })
+            })
         })
     })
 })
