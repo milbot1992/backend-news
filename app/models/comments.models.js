@@ -14,7 +14,6 @@ exports.insertComments = (newComment, article_id) => {
                                     RETURNING*;
                                     `, commentArr)
     return db.query(formattedQuery).then((result) => {
-        console.log(result.rows[0]);
         return result.rows[0]
     })
 }
