@@ -34,8 +34,7 @@ In the root directory of the project, create two files: one named `.env.test` an
 
 2. Define Environment Variables
 
-Add database info
-Open the `.env.test` file you just created and add the following: PGDATABASE=nc_news_test
+Add database info to each file - open the `.env.test` file you just created and add the following: PGDATABASE=nc_news_test
 Open the `.env.development` file and add the following: PGDATABASE=nc_news
 
 ### Prerequisites
