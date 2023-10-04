@@ -5,12 +5,4 @@ SELECT * FROM users;
 SELECT * FROM articles;
 SELECT * FROM comments;
 
-SELECT
-articles.author, articles.title, articles.body, articles.topic,
-articles.created_at, articles.votes, articles.article_img_url,
-COUNT(comments.comment_id) AS comment_count
-FROM articles
-LEFT JOIN comments ON comments.article_id = articles.article_id
-WHERE articles.article_id = 4
-GROUP BY articles.author, articles.title, articles.body, articles.topic,
-        articles.created_at, articles.votes, articles.article_img_url;
+SELECT DISTINCT slug FROM topics;

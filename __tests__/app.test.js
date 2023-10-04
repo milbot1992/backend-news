@@ -95,6 +95,33 @@ describe('GET /api/articles', () => {
             })
         })
     })
+    test('should return an array of only articles of a certain specified topic - cats', () => {
+        return request(app)
+        .get('/api/articles?topic=cats')
+        .expect(200)
+        .then(({body}) => {
+            body.articles.forEach((article)=>{
+                expect(article.topic).toBe('cats')
+        })
+    })
+    })
+    test('should return a 404, not found when a non-existent topic query is entered - dogs', () => {
+        return request(app)
+        .get('/api/articles?topic=dogs')
+        .expect(404)
+        .then((response) => {
+            expect(response.body.message).toBe('Non-existent topic query: dogs')
+        })
+    })
+    test('should return 200 status code and an empty array for valid topic with no articles', () => {
+        return request(app)
+        .get('/api/articles?topic=paper')
+        .expect(200)
+        .then(({body}) => {
+            expect(body.articles).toHaveLength(0)
+            expect(body.articles).toEqual([])
+        })
+    })
 })
 describe('GET /api/articles/:article_id/comments', () => {
     test('should return 200 status code and an array of comments for specified article', () => {

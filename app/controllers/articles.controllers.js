@@ -1,10 +1,41 @@
 const { fetchArticles, fetchArticleById, updateArticle } = require('../models/articles.models')
+const { fetchTopics } = require('../models/topics.models')
 
 exports.getArticles = (req, res, next) => {
     const { topic } = req.query
 
     fetchArticles(topic).then((articles) => {
         res.status(200).send({articles})
+    })
+    .catch((err) => {
+        next(err)
+    })
+}
+
+exports.getArticles = (req, res, next) => {
+    const { topic } = req.query
+    
+    Promise.allSettled([
+        fetchArticles(topic),
+        topic && fetchTopics(topic)
+    ])
+    .then((results) => {
+        const [articlesResult, topicResult] = results
+
+        if(articlesResult.status === 'fulfilled') {
+            const articles = articlesResult.value
+
+            if(topicResult && topicResult.status === 'fulfilled' && articles.length === 0 ) {
+                res.status(200).send({articles: []})
+            } else {
+                res.status(200).send({articles})
+            } 
+        } else {
+            next(articlesResult.reason)
+        }
+    })
+    .catch((err) => {
+        next(err)
     })
 }
 

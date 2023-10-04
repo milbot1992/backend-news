@@ -1,17 +1,36 @@
 const { db } = require('../../db/connection')
 
 exports.fetchArticles = (topic) => {
-    return db.query (   `SELECT
-                        articles.author, articles.title, articles.article_id, articles.topic,
-                        articles.created_at, articles.votes, articles.article_img_url,
-                        COUNT(comments.comment_id) AS comment_count
-                        FROM articles
-                        LEFT JOIN comments ON comments.article_id = articles.article_id
-                        GROUP BY articles.author, articles.title, articles.article_id, articles.topic,
-                        articles.created_at, articles.votes, articles.article_img_url
-                        ORDER BY articles.created_at DESC;`)
-    .then(({rows}) => {
-        return rows
+    return db.query('SELECT DISTINCT slug FROM topics;')
+    .then((topics) => {
+        const validTopics = topics.rows
+        const topicObject = {}
+        validTopics.forEach ((item) => {
+            topicObject[item.slug] = item.slug
+        })
+
+        if(topic !== undefined && !(topic in topicObject)) {
+            return Promise.reject({ status: 404, message: `Non-existent topic query: ${topic}`})
+        }
+        let query = `SELECT
+                    articles.author, articles.title, articles.article_id, articles.topic,
+                    articles.created_at, articles.votes, articles.article_img_url,
+                    COUNT(comments.comment_id) AS comment_count
+                    FROM articles
+                    LEFT JOIN comments ON comments.article_id = articles.article_id`
+        const values = []
+    
+        if(topic !== undefined) {
+            query += ' WHERE topic = $1'
+            values.push(topic)
+        }
+        query += ` GROUP BY articles.author, articles.title, articles.article_id, articles.topic,
+                    articles.created_at, articles.votes, articles.article_img_url
+                    ORDER BY articles.created_at DESC;`
+        return db.query (query, values)
+        .then(({rows}) => {
+            return rows
+        })
     })
 }
 

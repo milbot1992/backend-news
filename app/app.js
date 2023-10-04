@@ -6,8 +6,6 @@ const { getCommentsForArticle, postComments, deleteComment } = require('./contro
 const { handlePSQLErrors, handleCustomErrors, handleServerErrors } = require('./controllers/errors.controllers')
 const { getUsers } = require('./controllers/users.controllers')
 
-
-
 const app = express()
 app.use(express.json())
 
