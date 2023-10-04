@@ -29,7 +29,6 @@ describe('GET /api/articles/:article_id', () => {
         .expect(200)
         .then(({body}) => {
             expect(body.article.article_id).toBe(4)
-            // Query on whether the below would be better as a specific article object for article with id 4?
             expect(body.article).toMatchObject({article_id: expect.any(Number),
                                             author: expect.any(String),
                                             title: expect.any(String),
