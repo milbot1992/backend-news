@@ -13,7 +13,7 @@ exports.fetchTopics = (topic) => {
     return db.query(query, values)
     .then(({rows}) => {
         if(rows.length === 0) {
-            return Promise.reject( { status: 404, message: 'Topic not found' } )
+            return Promise.reject( { status: 404, message: 'Non-existent topic query' } )
         }
         return rows
     })

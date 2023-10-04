@@ -14,17 +14,24 @@ exports.getArticles = (req, res, next) => {
 
 exports.getArticles = (req, res, next) => {
     const { topic } = req.query
-
-    Promise.all([
+    
+    Promise.allSettled([
         fetchArticles(topic),
         topic && fetchTopics(topic)
     ])
     .then((results) => {
-        const [articles, topic] = results
-        if( topic && articles.length ===0 ) {
-            res.status(200).send({articles: []})
+        const [articlesResult, topicResult] = results
+
+        if(articlesResult.status === 'fulfilled') {
+            const articles = articlesResult.value
+
+            if(topicResult && topicResult.status === 'fulfilled' && articles.length === 0 ) {
+                res.status(200).send({articles: []})
+            } else {
+                res.status(200).send({articles})
+            } 
         } else {
-            res.status(200).send({articles})
+            next(articlesResult.reason)
         }
     })
     .catch((err) => {

@@ -102,12 +102,21 @@ describe('GET /api/articles', () => {
         })
     })
     })
-    test('should return a 400, bad request when an invalid topic query is entered - dogs', () => {
+    test('should return a 404, not found when a non-existent topic query is entered - dogs', () => {
         return request(app)
         .get('/api/articles?topic=dogs')
-        .expect(400)
+        .expect(404)
         .then((response) => {
-            expect(response.body.message).toBe('Invalid topic query entered: dogs')
+            expect(response.body.message).toBe('Non-existent topic query: dogs')
+        })
+    })
+    test('should return 200 status code and an empty array for valid topic with no articles', () => {
+        return request(app)
+        .get('/api/articles?topic=paper')
+        .expect(200)
+        .then(({body}) => {
+            expect(body.articles).toHaveLength(0)
+            expect(body.articles).toEqual([])
         })
     })
 })
