@@ -122,6 +122,38 @@ describe('GET /api/articles', () => {
             expect(body.articles).toEqual([])
         })
     })
+    test('should return an array of article objects ordered by specified field desc', () => {
+        return request(app)
+        .get('/api/articles?sort_by=title')
+        .expect(200)
+        .then(({body}) => {
+            expect(body.articles).toBeSortedBy('title', {descending: true})
+        })
+    })
+    test('should return a 400, bad request when an invalid sort_by field is entered', () => {
+        return request(app)
+        .get('/api/articles?sort_by=notValidSort')
+        .expect(400)
+        .then((response) => {
+            expect(response.body.message).toBe('Invalid search query')
+        })
+    })
+    test('should return an array of articles sorted in ascending order when passed a query order=asc', () => {
+        return request(app)
+        .get('/api/articles?order=asc')
+        .expect(200)
+        .then(({body}) => {
+            expect(body.articles).toBeSortedBy('created_at')
+        })
+    })
+    test('should return a 400, bad request when an invalid order field is entered', () => {
+        return request(app)
+        .get('/api/articles?order=ascc')
+        .expect(400)
+        .then((response) => {
+            expect(response.body.message).toBe('Invalid search query')
+        })
+    })
 })
 describe('GET /api/articles/:article_id/comments', () => {
     test('should return 200 status code and an array of comments for specified article', () => {

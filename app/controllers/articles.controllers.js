@@ -13,10 +13,10 @@ exports.getArticles = (req, res, next) => {
 }
 
 exports.getArticles = (req, res, next) => {
-    const { topic } = req.query
-    
+    const { topic, sort_by, order } = req.query
+
     Promise.allSettled([
-        fetchArticles(topic),
+        fetchArticles(topic, sort_by, order),
         topic && fetchTopics(topic)
     ])
     .then((results) => {
