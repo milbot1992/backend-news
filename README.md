@@ -28,14 +28,15 @@ git clone https://github.com/milbot1992/backend-news
 
 To run this project locally, you'll need to set up some environment variables. These variables are used for database information. Follow these steps to create the environment variables:
 
-1. Create `.env.test` and `.env.development` files
+#### Create `.env.test` and `.env.development` files
 
 In the root directory of the project, create two files: one named `.env.test` and one named `.env.development`
 
-2. Define Environment Variables
+#### Define Environment Variables
 
-Add database info to each file - open the `.env.test` file you just created and add the following: PGDATABASE=nc_news_test
-Open the `.env.development` file and add the following: PGDATABASE=nc_news
+Add database info to each file
+1. Open the `.env.test` file you just created and add the following: PGDATABASE=nc_news_test
+2. Open the `.env.development` file and add the following: PGDATABASE=nc_news
 
 ### Prerequisites
 Node.js (Minimum version: X.X.X)
