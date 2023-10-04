@@ -1,4 +1,4 @@
-const { db } = require('../db/connection')
+const {db} = require('../db/connection')
 const app = require('../app/app')
 const request = require('supertest')
 const seed = require('../db/seeds/seed.js')
