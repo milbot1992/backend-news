@@ -55,6 +55,7 @@ exports.fetchArticles = (topic, sort_by = 'created_at', order = 'desc', limit = 
 }
 
 exports.fetchArticleById = (article_id) => {
+
     return db.query(`SELECT
                         articles.article_id, articles.author, articles.title, articles.body, articles.topic,
                         articles.created_at, articles.votes, articles.article_img_url,
@@ -65,7 +66,6 @@ exports.fetchArticleById = (article_id) => {
                     GROUP BY articles.article_id, articles.author, articles.title, articles.article_id, 
                             articles.topic, articles.created_at, articles.votes, 
                             articles.article_img_url;`, [article_id])
-
     .then(({rows}) => {
         if(rows.length === 0) {
             return Promise.reject( { status: 404, message: 'Article not found' } )

@@ -18,13 +18,24 @@ exports.insertComments = (newComment, article_id) => {
     })
 }
 
-exports.fetchCommentsForArticle = (article_id) => {
-    return db.query (   `SELECT *
-                        FROM comments
-                        WHERE article_id = $1
-                        ORDER BY created_at;`, [article_id] )
+exports.fetchCommentsForArticle = (article_id, limit = 10, p = 1) => {
+    const offset = (p - 1) * limit
+    
+    let formattedQuery = format (`SELECT *
+                                FROM comments
+                                WHERE article_id = %L
+                                ORDER BY created_at
+                                LIMIT %s OFFSET %s;`, [article_id], limit, offset)
+
+    return db.query (formattedQuery)
     .then(({rows}) => {
-        return rows
+        let totalCountQuery = `SELECT COUNT(*) FROM comments WHERE article_id = $1`
+
+        return db.query(totalCountQuery, [article_id])
+        .then(({rows: [total]}) => {
+            const output = { comments: rows, total_count: parseInt(total.count, 10) }
+            return output
+        })
     })
 }
 

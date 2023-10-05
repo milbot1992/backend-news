@@ -14,17 +14,18 @@ exports.postComments = (req, res, next) => {
 
 exports.getCommentsForArticle = (req, res, next) => {
     const { article_id } = req.params
+    const { limit, p } = req.query
 
     Promise.all([
-        fetchCommentsForArticle(article_id),
+        fetchCommentsForArticle(article_id, limit, p),
         article_id && fetchArticleById(article_id)
     ])
     .then((results) => {
         const [comments, article] = results
-        if(article && comments.length ===0) {
-            res.status(200).send({comments: []})
+        if(article && comments.length === 0) {
+            res.status(200).send({comments: [], total_count: comments.total_count})
         } else {
-            res.status(200).send({comments})
+            res.status(200).send(comments)
         }
     })
     .catch((err) => {
