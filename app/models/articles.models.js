@@ -1,6 +1,8 @@
 const { db } = require('../../db/connection')
+const format = require('pg-format')
+const { formatComments } = require('../../db/seeds/utils')
 
-exports.fetchArticles = (topic) => {
+exports.fetchArticles = (topic, sort_by = 'created_at', order = 'desc') => {
     return db.query('SELECT DISTINCT slug FROM topics;')
     .then((topics) => {
         const validTopics = topics.rows
@@ -8,7 +10,6 @@ exports.fetchArticles = (topic) => {
         validTopics.forEach ((item) => {
             topicObject[item.slug] = item.slug
         })
-
         if(topic !== undefined && !(topic in topicObject)) {
             return Promise.reject({ status: 404, message: `Non-existent topic query: ${topic}`})
         }
@@ -18,16 +19,19 @@ exports.fetchArticles = (topic) => {
                     COUNT(comments.comment_id) AS comment_count
                     FROM articles
                     LEFT JOIN comments ON comments.article_id = articles.article_id`
-        const values = []
+        const values = [sort_by, order]
     
         if(topic !== undefined) {
-            query += ' WHERE topic = $1'
-            values.push(topic)
+            values.unshift([topic])
+            query += ` WHERE articles.topic = %L`
         }
         query += ` GROUP BY articles.author, articles.title, articles.article_id, articles.topic,
                     articles.created_at, articles.votes, articles.article_img_url
-                    ORDER BY articles.created_at DESC;`
-        return db.query (query, values)
+                    ORDER BY articles.%s %s;`
+        
+        const formattedQuery = format(query, values[0], values[1], values[2])
+
+        return db.query (formattedQuery)
         .then(({rows}) => {
             return rows
         })
