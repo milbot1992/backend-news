@@ -113,6 +113,20 @@
                         "article_id": 9,
                         "created_at": "2020-04-06T12:17:00.000Z" 
     }
+  },
+  "POST /api/articles": {
+    "description": "posts a new article and returns an object containing the posted article",
+    "format": ["title", "topic", "author", "body", "article_img_url"],
+    "exampleResponse": {
+                        "article_id": 15,
+                        "title": "Test Article 2",
+                        "topic": "cats",
+                        "author": "lurker",
+                        "votes": 0,
+                        "body": "Test article 2 to ensure it is added to articles",
+                        "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+                        "created_at": "2018-05-30T15:59:13.341Z"
+    }
   }
 }
 

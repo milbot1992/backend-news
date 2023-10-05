@@ -76,85 +76,178 @@ describe('GET /api', () => {
     })
 })
 describe('GET /api/articles', () => {
-    test('should return 200 status code and an array of articles objects ordered by created_at descending', () => {
-        return request(app)
-        .get('/api/articles')
-        .expect(200)
-        .then(({body}) => {
-            expect(body.articles).toBeSortedBy('created_at', {descending: true})
-            body.articles.forEach((article)=>{
-                expect(article).toMatchObject({author: expect.any(String),
-                                            title: expect.any(String),
-                                            article_id: expect.any(Number),
-                                            topic: expect.any(String),
-                                            created_at: expect.any(String),
-                                            votes: expect.any(Number),
-                                            article_img_url: expect.any(String),
-                                            comment_count: expect.any(String),
-                                        })
+    describe('Tests for path with no queries', () => {
+        test('should return 200 status code and an array of articles objects ordered by created_at descending', () => {
+            return request(app)
+            .get('/api/articles')
+            .expect(200)
+            .then(({body}) => {
+                expect(body.articles).toBeSortedBy('created_at', {descending: true})
+                body.articles.forEach((article)=>{
+                    expect(article).toMatchObject({author: expect.any(String),
+                                                title: expect.any(String),
+                                                article_id: expect.any(Number),
+                                                topic: expect.any(String),
+                                                created_at: expect.any(String),
+                                                votes: expect.any(Number),
+                                                article_img_url: expect.any(String),
+                                                comment_count: expect.any(String),
+                                            })
+                })
             })
         })
-    })
-    test('should return an array of only articles of a certain specified topic - cats', () => {
-        return request(app)
-        .get('/api/articles?topic=cats')
-        .expect(200)
-        .then(({body}) => {
-            body.articles.forEach((article)=>{
-                expect(article.topic).toBe('cats')
+    });
+    describe('Tests for when a topic query is entered', () => {
+        test('should return an array of only articles of a certain specified topic - cats', () => {
+            return request(app)
+            .get('/api/articles?topic=cats')
+            .expect(200)
+            .then(({body}) => {
+                body.articles.forEach((article)=>{
+                    expect(article.topic).toBe('cats')
+            })
         })
-    })
-    })
-    test('should return a 404, not found when a non-existent topic query is entered - dogs', () => {
-        return request(app)
-        .get('/api/articles?topic=dogs')
-        .expect(404)
-        .then((response) => {
-            expect(response.body.message).toBe('Non-existent topic query: dogs')
         })
-    })
-    test('should return 200 status code and an empty array for valid topic with no articles', () => {
-        return request(app)
-        .get('/api/articles?topic=paper')
-        .expect(200)
-        .then(({body}) => {
-            expect(body.articles).toHaveLength(0)
-            expect(body.articles).toEqual([])
+        test('should return a 404, not found when a non-existent topic query is entered - dogs', () => {
+            return request(app)
+            .get('/api/articles?topic=dogs')
+            .expect(404)
+            .then((response) => {
+                expect(response.body.message).toBe('Non-existent topic query: dogs')
+            })
         })
-    })
-    test('should return an array of article objects ordered by specified field desc', () => {
-        return request(app)
-        .get('/api/articles?sort_by=title')
-        .expect(200)
-        .then(({body}) => {
-            expect(body.articles).toBeSortedBy('title', {descending: true})
+        test('should return 200 status code and an empty array for valid topic with no articles', () => {
+            return request(app)
+            .get('/api/articles?topic=paper')
+            .expect(200)
+            .then(({body}) => {
+                expect(body.articles).toHaveLength(0)
+                expect(body.articles).toEqual([])
+            })
         })
-    })
-    test('should return a 400, bad request when an invalid sort_by field is entered', () => {
-        return request(app)
-        .get('/api/articles?sort_by=notValidSort')
-        .expect(400)
-        .then((response) => {
-            expect(response.body.message).toBe('Invalid search query')
+    });
+    describe('Tests for sort_by query', () => {
+        test('should return an array of article objects ordered by specified field desc', () => {
+            return request(app)
+            .get('/api/articles?sort_by=title')
+            .expect(200)
+            .then(({body}) => {
+                expect(body.articles).toBeSortedBy('title', {descending: true})
+            })
         })
-    })
-    test('should return an array of articles sorted in ascending order when passed a query order=asc', () => {
-        return request(app)
-        .get('/api/articles?order=asc')
-        .expect(200)
-        .then(({body}) => {
-            expect(body.articles).toBeSortedBy('created_at')
+        test('should return a 400, bad request when an invalid sort_by field is entered', () => {
+            return request(app)
+            .get('/api/articles?sort_by=notValidSort')
+            .expect(400)
+            .then((response) => {
+                expect(response.body.message).toBe('Invalid search query')
+            })
         })
-    })
-    test('should return a 400, bad request when an invalid order field is entered', () => {
-        return request(app)
-        .get('/api/articles?order=ascc')
-        .expect(400)
-        .then((response) => {
-            expect(response.body.message).toBe('Invalid search query')
+    });
+    describe('Tests for order query', () => {
+        test('should return an array of articles sorted in ascending order when passed a query order=asc', () => {
+            return request(app)
+            .get('/api/articles?order=asc')
+            .expect(200)
+            .then(({body}) => {
+                expect(body.articles).toBeSortedBy('created_at')
+            })
         })
-    })
-})
+        test('should return a 400, bad request when an invalid order field is entered', () => {
+            return request(app)
+            .get('/api/articles?order=ascc')
+            .expect(400)
+            .then((response) => {
+                expect(response.body.message).toBe('Invalid search query')
+            })
+        })
+    });
+    describe('Tests for limit and pagination queries', () => {
+        test('checking limit parameter: should return an object with accurate list of articles and total_count - limit=2, page=default(1)', () => {
+            return request(app)
+            .get('/api/articles?limit=2')
+            .expect(200)
+            .then((res) => {
+                expect(res.body.total_count).toBe(13)
+                expect(res.body.articles).toMatchObject([{
+                                                        author: 'icellusedkars',
+                                                        title: 'Eight pug gifs that remind me of mitch',
+                                                        article_id: 3,
+                                                        topic: 'mitch',
+                                                        created_at: "2020-11-03T09:12:00.000Z",
+                                                        votes: 0,
+                                                        article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
+                                                        comment_count: '2'
+                                                    },
+                                                    {
+                                                        author: 'icellusedkars',
+                                                        title: 'A',
+                                                        article_id: 6,
+                                                        topic: 'mitch',
+                                                        created_at: "2020-10-18T01:00:00.000Z",
+                                                        votes: 0,
+                                                        article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
+                                                        comment_count: '1'
+                }
+                ])
+            })
+        });
+        test('checking pagination parameter: should return an object with accurate list of articles and total_count - limit=2, page =2', () => {
+            return request(app)
+            .get('/api/articles?limit=2&p=2')
+            .expect(200)
+            .then((res) => {
+                expect(res.body.total_count).toBe(13)
+                expect(res.body.articles).toMatchObject([{
+                                                        author: 'icellusedkars',
+                                                        title: 'Sony Vaio; or, The Laptop',
+                                                        article_id: 2,
+                                                        topic: 'mitch',
+                                                        created_at: "2020-10-16T05:03:00.000Z",
+                                                        votes: 0,
+                                                        article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
+                                                        comment_count: '0'
+                                                    },
+                                                    {
+                                                        author: 'butter_bridge',
+                                                        title: 'Another article about Mitch',
+                                                        article_id: 13,
+                                                        topic: 'mitch',
+                                                        created_at: "2020-10-11T11:24:00.000Z",
+                                                        votes: 0,
+                                                        article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
+                                                        comment_count: '0'
+                }
+                ])
+            })
+        })
+        test('should return empty articles array when page entered is higher than number of articles that we have', async () => {
+            return request(app)
+            .get('/api/articles?p=5')
+            .expect(200)
+            .then((res) => {
+                expect(res.body.total_count).toBe(13)
+                expect(res.body.articles).toMatchObject([])
+            })
+        });
+        test('should return 400 Bad Request when limit parameter is invalid', async () => {
+            return request(app)
+            .get('/api/articles?topic=cats&limit=invalid')
+            .expect(400)
+            .then((res) => {
+                expect(res.body.message).toBe('Invalid search query');
+            })
+        });
+        test('should return 400 Bad Request when pagination parameter is invalid', async () => {
+            return request(app)
+            .get('/api/articles?topic=cats&p=invalid')
+            .expect(400)
+            .then((res) => {
+                expect(res.body.message).toBe('Invalid search query');
+            })
+        });
+    });
+});
 describe('GET /api/articles/:article_id/comments', () => {
     test('should return 200 status code and an array of comments for specified article', () => {
         return request(app)
@@ -476,9 +569,8 @@ describe('GET /api/users/:username', () => {
         })
     })
 })
-
 describe('PATCH /api/comments/:comment_id',()=>{
-    test('should return the updated article object with a 201 status code when passed a positive inc_votes',()=>{
+    test('should return the updated comment object with a 201 status code when passed a positive inc_votes',()=>{
         return request(app)
         .patch('/api/comments/1')
         .send({ inc_votes : 10 })
@@ -493,7 +585,7 @@ describe('PATCH /api/comments/:comment_id',()=>{
                                                     })
         })
     })
-    test('should return the updated article object with a 201 status code  when passed a negative inc_votes',()=>{
+    test('should return the updated comment object with a 201 status code  when passed a negative inc_votes',()=>{
         return request(app)
         .patch('/api/comments/5')
         .send({ inc_votes : -10 })
@@ -508,7 +600,7 @@ describe('PATCH /api/comments/:comment_id',()=>{
                                                     })
         })
     })
-    test('should return the updated article object with a 201 status code when passed a request with extra properties',()=>{
+    test('should return the updated comment object with a 201 status code when passed a request with extra properties',()=>{
         return request(app)
         .patch('/api/comments/4')
         .send({ inc_votes : 10,
@@ -532,7 +624,7 @@ describe('PATCH /api/comments/:comment_id',()=>{
             expect(res.body.message).toBe('Comment not found')
         })
     })
-    test('should return 400 Bad Request if given an invalid article_id',()=>{
+    test('should return 400 Bad Request if given an invalid comment_id',()=>{
         return request(app)
         .patch('/api/comments/notAnId')
         .send({ inc_votes : 100 })
@@ -559,3 +651,135 @@ describe('PATCH /api/comments/:comment_id',()=>{
         })
     })
 })
+
+describe('POST /api/articles', () => {
+    test('should return 201 status code and return the new posted article', () => {
+        const newArticle = {
+                            title: "Test Article",
+                            topic: "paper",
+                            author: "lurker",
+                            body: "Test article to ensure it is added to articles",
+                            article_img_url: "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+                            }
+        return request(app)
+        .post('/api/articles')
+        .send(newArticle)
+        .expect(201)
+        .then((res) => {
+            expect(res.body.article).toMatchObject({
+                                                    article_id: 14,
+                                                    title: "Test Article",
+                                                    topic: "paper",
+                                                    author: "lurker",
+                                                    votes: 0,
+                                                    body: "Test article to ensure it is added to articles",
+                                                    article_img_url: "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+                                                    created_at: expect.any(String)
+                                                    })
+        })
+    });
+    test('should return 201 status code and return the new posted article when passed a request with an extra field', () => {
+        const newArticle = {
+                            title: "Test Article 2",
+                            topic: "cats",
+                            author: "lurker",
+                            body: "Test article 2 to ensure it is added to articles",
+                            article_img_url: "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+                            }
+        return request(app)
+        .post('/api/articles')
+        .send(newArticle)
+        .expect(201)
+        .then((res) => {
+            expect(res.body.article).toMatchObject({
+                                                    article_id: 15,
+                                                    title: "Test Article 2",
+                                                    topic: "cats",
+                                                    author: "lurker",
+                                                    votes: 0,
+                                                    body: "Test article 2 to ensure it is added to articles",
+                                                    article_img_url: "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+                                                    created_at: expect.any(String)
+                                                    })
+        })
+    });
+    test('should return a 400 Bad Request if the object passed is incorrectly formatted - first key incorrectly spelt',()=>{
+        const newArticle = {
+                            titleee: "Test Article 3",
+                            topic: "mitch",
+                            author: "lurker",
+                            body: "Test article 3 to ensure it is added to articles",
+                            article_img_url: "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+                            }
+        return request(app)
+        .post('/api/articles')
+        .send(newArticle)
+        .expect(400)
+        .then ((res)=>{
+            expect(res.body.message).toBe('Bad request, request missing required columns')
+        })
+    })
+    test('should return a 400 Bad Request if the object passed is missing required properties - missing key: title',()=>{
+        const newArticle = {
+                            topic: "cats",
+                            author: "lurker",
+                            body: "Test article 3 bad request",
+                            article_img_url: "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+                            }
+        return request(app)
+        .post('/api/articles')
+        .send(newArticle)
+        .expect(400)
+        .then ((res)=>{
+            expect(res.body.message).toBe('Bad request, request missing required columns')
+        })
+    }) 
+    test('should return a 404 Not Found if the object passed has bad values - topic must appear in topics table to be accepted',()=>{
+        const newArticle = {
+                            title: "Test Article 5",
+                            topic: "notAValidTopic",
+                            author: "lurker",
+                            body: "Test article 3 bad request",
+                            article_img_url: "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+                            }
+        return request(app)
+        .post('/api/articles')
+        .send(newArticle)
+        .expect(404)
+        .then ((res)=>{
+            expect(res.body.message).toBe('Not found')
+        })
+    })
+    test('should return a 404 Not Found if the object passed has bad values - author must appear in users table to be accepted',()=>{
+        const newArticle = {
+                            title: "Test Article 5",
+                            topic: "cats",
+                            author: "lurkernotAValidAuthor",
+                            body: "Test article 3 bad request",
+                            article_img_url: "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+                            }
+        return request(app)
+        .post('/api/articles')
+        .send(newArticle)
+        .expect(404)
+        .then ((res)=>{
+            expect(res.body.message).toBe('Not found')
+        })
+    })
+    test('should return a 404 Not Found if the object passed has bad values - topic must have a value',()=>{
+        const newArticle = {
+                            title: "Test Article 6",
+                            topic: "",
+                            author: "lurker",
+                            body: "Test article 6 bad request",
+                            article_img_url: "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+                            }
+        return request(app)
+        .post('/api/articles')
+        .send(newArticle)
+        .expect(404)
+        .then ((res)=>{
+            expect(res.body.message).toBe('Not found')
+        })
+    })
+})    
