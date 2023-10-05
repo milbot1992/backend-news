@@ -454,3 +454,25 @@ describe('DELETE /api/comments/:comment_id',()=>{
         })
     })
 })
+describe('GET /api/users/:username', () => {
+    test('should return 200 status code and a user object with the correct username', () => {
+        return request(app)
+        .get('/api/users/icellusedkars')
+        .expect(200)
+        .then(({body}) => {
+            expect(body.user.username).toBe('icellusedkars')
+            expect(body.user).toMatchObject({username: 'icellusedkars',
+                                            name: 'sam',
+                                            avatar_url: 'https://avatars2.githubusercontent.com/u/24604688?s=460&v=4'
+                                        })
+        })
+    })
+    test('should return 404 Not found if given a username that does not exist',()=>{
+        return request(app)
+        .get('/api/users/milbot1992')
+        .expect(404)
+        .then((res) => {
+            expect(res.body.message).toBe('Article not found')
+        })
+    })
+})
