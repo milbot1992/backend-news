@@ -11,80 +11,79 @@
   },
   "GET /api/articles": {
     "description": "serves an array of all articles ordered by date descending",
-    "queries": ["topic"],
+    "queries": ["topic", "sort_by", "order"],
     "exampleResponse": {
       "articles": [
-        {
-          "title": "Seafood substitutions are increasing",
-          "topic": "cooking",
-          "author": "weegembump",
-          "body": "Text from the article..",
-          "created_at": "2018-05-30T15:59:13.341Z",
-          "votes": 0,
-          "comment_count": 6
-        }
-      ]
+                  {
+                    "title": "Seafood substitutions are increasing",
+                    "topic": "cooking",
+                    "author": "weegembump",
+                    "body": "Text from the article..",
+                    "created_at": "2018-05-30T15:59:13.341Z",
+                    "votes": 0,
+                    "comment_count": 6
+      }]
     }
   },
   "GET /api/articles/:article_id/comments": {
     "description": "serves an array of all comments for specified article, ordered by date ascending",
-    "queries": ["author", "topic", "sort_by", "order"],
+    "queries": [],
     "exampleResponse": {
       "comments": [{
-          "comment_id": 10,
-          "body": "git push origin master",
-          "article_id": 3,
-          "author": "icellusedkars",
-          "votes": 0,
-          "created_at": "2020-06-20T07:24:00.000Z"
+                    "comment_id": 10,
+                    "body": "git push origin master",
+                    "article_id": 3,
+                    "author": "icellusedkars",
+                    "votes": 0,
+                    "created_at": "2020-06-20T07:24:00.000Z"
       }]
     }
   },
   "GET /api/articles/:article_id": {
     "description": "serves an object containing the specified article",
-    "queries": ["author", "topic", "sort_by", "order"],
+    "queries": [],
     "exampleResponse": {
-          "title": "Seafood substitutions are increasing",
-          "topic": "cooking",
-          "author": "weegembump",
-          "body": "Text from the article..",
-          "created_at": "2018-05-30T15:59:13.341Z",
-          "votes": 0,
-          "comment_count": 6
+                        "title": "Seafood substitutions are increasing",
+                        "topic": "cooking",
+                        "author": "weegembump",
+                        "body": "Text from the article..",
+                        "created_at": "2018-05-30T15:59:13.341Z",
+                        "votes": 0,
+                        "comment_count": 6
     }
   },
   "PATCH /api/articles/:article_id": {
     "description": "updates article with increase/decrease in votes and returns an object containing the specified updated article",
     "format": ["inc_votes"],
     "exampleResponse": {
-            "article_id": 5,
-            "title": "UNCOVERED: catspiracy to bring down democracy",
-            "topic": "cats",
-            "author": "rogersop",
-            "body": "Bastet walks amongst us, and the cats are taking arms!",
-            "created_at": "2020-08-03T13:14:00.000Z",
-            "votes": -10,
-            "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
-            "comment_count": 0
+                        "article_id": 5,
+                        "title": "UNCOVERED: catspiracy to bring down democracy",
+                        "topic": "cats",
+                        "author": "rogersop",
+                        "body": "Bastet walks amongst us, and the cats are taking arms!",
+                        "created_at": "2020-08-03T13:14:00.000Z",
+                        "votes": -10,
+                        "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+                        "comment_count": 0
     }
   },
   "POST /api/articles/:article_id/comments": {
     "description": "posts a new comment and returns an object containing the posted comment",
     "format": ["username", "body"],
     "exampleResponse": {
-      "comment_id": 19,
-      "body": "great article",
-      "article_id": 1,
-      "author": "butter_bridge",
-      "votes": 0,
-      "created_at": "2018-05-30T15:59:13.341Z"
+                        "comment_id": 19,
+                        "body": "great article",
+                        "article_id": 1,
+                        "author": "butter_bridge",
+                        "votes": 0,
+                        "created_at": "2018-05-30T15:59:13.341Z"
     }
   },
   "GET /api/users": {
     "description": "serves an array of all users",
     "queries": [],
     "exampleResponse": {
-      "topics": [{
+      "users": [{
                   "username": "butter_bridge",
                   "name": "jonny",
                   "avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
@@ -93,6 +92,27 @@
   },
   "DELETE /api/comments/:comment_id": {
     "description": "deletes specified comment and returns no content"
+  },
+  "GET /api/users/:username": {
+    "description": "serves a user object of the specified username",
+    "queries": [],
+    "exampleResponse": {
+                  "username": "butter_bridge",
+                  "name": "jonny",
+                  "avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+    }
+  },
+  "PATCH /api/comments/:comment_id": {
+    "description": "updates comment with increase/decrease in votes and returns an object containing the specified updated comment",
+    "format": ["inc_votes"],
+    "exampleResponse": {
+                        "comment_id": 1,
+                        "body": "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+                        "votes": 26,
+                        "author": "butter_bridge",
+                        "article_id": 9,
+                        "created_at": "2020-04-06T12:17:00.000Z" 
+    }
   }
-} 
+}
 

@@ -476,3 +476,86 @@ describe('GET /api/users/:username', () => {
         })
     })
 })
+
+describe('PATCH /api/comments/:comment_id',()=>{
+    test('should return the updated article object with a 201 status code when passed a positive inc_votes',()=>{
+        return request(app)
+        .patch('/api/comments/1')
+        .send({ inc_votes : 10 })
+        .expect(201).then((res)=>{
+            expect(res.body.comment).toMatchObject({
+                                                    comment_id: 1,
+                                                    body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+                                                    votes: 26,
+                                                    author: "butter_bridge",
+                                                    article_id: 9,
+                                                    created_at: "2020-04-06T12:17:00.000Z"            
+                                                    })
+        })
+    })
+    test('should return the updated article object with a 201 status code  when passed a negative inc_votes',()=>{
+        return request(app)
+        .patch('/api/comments/5')
+        .send({ inc_votes : -10 })
+        .expect(201).then((res)=>{
+            expect(res.body.comment).toMatchObject({
+                                                    comment_id: 5,
+                                                    body: "I hate streaming noses",
+                                                    votes: -10,
+                                                    author: "icellusedkars",
+                                                    article_id: 1,
+                                                    created_at: "2020-11-03T21:00:00.000Z",                
+                                                    })
+        })
+    })
+    test('should return the updated article object with a 201 status code when passed a request with extra properties',()=>{
+        return request(app)
+        .patch('/api/comments/4')
+        .send({ inc_votes : 10,
+                extra_field: "extra value"})
+        .expect(201).then((res)=>{
+            expect(res.body.comment).toMatchObject({
+                                                    comment_id: 4,
+                                                    body: " I carry a log — yes. Is it funny to you? It is not to me.",
+                                                    votes: -90,
+                                                    author: "icellusedkars",
+                                                    article_id: 1,
+                                                    created_at: "2020-02-23T12:01:00.000Z",        
+                                                    })
+        })
+    })
+    test('should return 404 Not found if given a comment_id that does not exist',()=>{
+        return request(app)
+        .patch('/api/comments/999')
+        .send({ inc_votes : 100 })
+        .expect(404).then((res)=>{
+            expect(res.body.message).toBe('Comment not found')
+        })
+    })
+    test('should return 400 Bad Request if given an invalid article_id',()=>{
+        return request(app)
+        .patch('/api/comments/notAnId')
+        .send({ inc_votes : 100 })
+        .expect(400).then((res)=>{
+            expect(res.body.message).toBe('Invalid ID')
+        })
+    })
+    test('should return a 400 Bad Request if the object passed is incorrectly formatted - wrong field name',()=>{
+        return request(app)
+        .patch('/api/comments/2')
+        .send({ inc : 100 })
+        .expect(400)
+        .then ((res)=>{
+            expect(res.body.message).toBe('Bad request, request missing required columns')
+        })
+    })
+    test('should return a 400 Bad Request if the object passed is incorrectly formatted - missing field name',()=>{
+        return request(app)
+        .patch('/api/comments/2')
+        .send({})
+        .expect(400)
+        .then ((res)=>{
+            expect(res.body.message).toBe('Bad request, request missing required columns')
+        })
+    })
+})
