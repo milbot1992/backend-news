@@ -46,3 +46,17 @@ exports.removeComment = (comment_id) => {
         return result[0].rows[0]
     })
 }
+
+exports.updateComment = (comment_id,changeVotesBy) => {
+    return db.query(`
+    UPDATE comments
+    SET votes = votes + $1
+    WHERE comment_id = $2
+    RETURNING *;
+    `, [changeVotesBy,comment_id]).then((result)=>{
+        if(result.rows.length === 0){
+            return Promise.reject({ status: 404, message: 'Comment not found' })
+        }
+        return result.rows[0]
+    })
+}
