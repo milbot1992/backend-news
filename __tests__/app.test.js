@@ -5,7 +5,7 @@ const seed = require('../db/seeds/seed.js')
 const data = require('../db/data/test-data')
 const { expect } = require('@jest/globals')
 
-beforeAll(()=>seed(data))
+beforeEach(()=>seed(data))
 afterAll(()=>db.end())
 
 describe('/api', () => {
@@ -320,7 +320,7 @@ describe('/api/articles', () => {
             .expect(201)
             .then((res) => {
                 expect(res.body.article).toMatchObject({
-                                                        article_id: 15,
+                                                        article_id: 14,
                                                         title: "Test Article 2",
                                                         topic: "cats",
                                                         author: "lurker",
@@ -534,6 +534,56 @@ describe('/api/articles', () => {
             })
         })
     })
+    describe('DELETE /api/articles/:article_id',()=>{
+        test('should return a 204 status code and no content - specified article_id should be deleted from articles table',()=>{
+            return request(app)
+            .delete('/api/articles/3')
+            .expect(204)
+            .then((res)=>{
+                expect(res.text).toBe('')
+            return db.query('SELECT * FROM articles')
+            .then((articles) => {
+                expect(articles.rows.length).toBe(12)
+                if(articles.rows.length > 0) {
+                    articles.rows.forEach((article)=>{
+                        expect(articles.article_id).not.toBe(3)
+                    })
+                }
+            })
+            })
+        })
+        test('should return a 204 status code and no content - comments for specified article_id should be deleted from comments table',()=>{
+            return request(app)
+            .delete('/api/articles/1')
+            .expect(204)
+            .then((res)=>{
+                expect(res.text).toBe('')
+            return db.query('SELECT * FROM comments')
+            .then((comments) => {
+                expect(comments.rows.length).toBe(7)
+                if(comments.rows.length > 0) {
+                    comments.rows.forEach((comment)=>{
+                        expect(comment.article_id).not.toBe(1)
+                    })
+                }
+            })
+            })
+        })
+        test('should return a 404 if given an article_id that does not exist',()=>{
+            return request(app)
+            .delete('/api/articles/999')
+            .expect(404).then(({body})=>{
+                expect(body.message).toBe('Article not found')
+            })
+        })
+        test('should return a 400 if given an invalid article_id',()=>{
+            return request(app)
+            .delete('/api/articles/notAnId')
+            .expect(400).then(({body})=>{
+                expect(body.message).toBe('Invalid ID')
+            })
+        })
+    })
     describe('GET /api/articles/:article_id/comments', () => {
         describe('Tests for path with no queries', () => {
             test('should return 200 status code and an array of comments for specified article', () => {
@@ -691,7 +741,7 @@ describe('/api/articles', () => {
             .expect(201)
             .then((res) => {
                 expect(res.body.comment).toMatchObject({
-                                                            comment_id: 20,
+                                                            comment_id: 19,
                                                             body: 'amazing article',
                                                             article_id: 2,
                                                             author: 'butter_bridge',
@@ -818,7 +868,7 @@ describe('/api/comments', () => {
                 expect(res.text).toBe('')
             return db.query('SELECT * FROM comments')
             .then((comments) => {
-                expect(comments.rows.length).toBe(19)
+                expect(comments.rows.length).toBe(17)
                 if(comments.rows.length > 0) {
                     comments.rows.forEach((comment)=>{
                         expect(comment.comment_id).not.toBe(18)
