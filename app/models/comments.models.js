@@ -24,7 +24,7 @@ exports.fetchCommentsForArticle = (article_id, limit = 10, p = 1) => {
     let formattedQuery = format (`SELECT *
                                 FROM comments
                                 WHERE article_id = %L
-                                ORDER BY created_at
+                                ORDER BY created_at DESC
                                 LIMIT %s OFFSET %s;`, [article_id], limit, offset)
 
     return db.query (formattedQuery)

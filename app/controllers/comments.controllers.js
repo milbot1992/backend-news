@@ -17,7 +17,7 @@ exports.getCommentsForArticle = (req, res, next) => {
     const { limit, p } = req.query
 
     Promise.all([
-        fetchCommentsForArticle(article_id, limit, p),
+        fetchCommentsForArticle(article_id, limit, p ),
         article_id && fetchArticleById(article_id)
     ])
     .then((results) => {
