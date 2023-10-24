@@ -592,7 +592,7 @@ describe('/api/articles', () => {
                 .expect(200)
                 .then(({body}) => {
                     expect(body.comments).toHaveLength(2)
-                    expect(body.comments).toBeSortedBy('created_at')
+                    expect(body.comments).toBeSortedBy('created_at', {descending: true})
                     body.comments.forEach((comment)=>{
                         expect(comment).toMatchObject({comment_id: expect.any(Number),
                                                     votes: expect.any(Number),
@@ -638,20 +638,20 @@ describe('/api/articles', () => {
                 .then((res) => {
                     expect(res.body.total_count).toBe(11)
                     expect(res.body.comments).toMatchObject([{
-                                                                comment_id: 9,
-                                                                body: 'Superficially charming',
+                                                                comment_id: 5,
+                                                                body: 'I hate streaming noses',
                                                                 article_id: 1,
                                                                 author: 'icellusedkars',
                                                                 votes: 0,
-                                                                created_at: "2020-01-01T03:08:00.000Z"
+                                                                created_at: "2020-11-03T21:00:00.000Z"
                                                             },
                                                             {
-                                                                comment_id: 4,
-                                                                body: ' I carry a log — yes. Is it funny to you? It is not to me.',
+                                                                comment_id: 2,
+                                                                body: 'The beautiful thing about treasure is that it exists. Got to find out what kind of sheets these are; not cotton, not rayon, silky.',
                                                                 article_id: 1,
-                                                                author: 'icellusedkars',
-                                                                votes: -100,
-                                                                created_at: "2020-02-23T12:01:00.000Z"
+                                                                author: 'butter_bridge',
+                                                                votes: 14,
+                                                                created_at: "2020-10-31T03:03:00.000Z"
                                                             }
                     ])
                 })
@@ -663,20 +663,20 @@ describe('/api/articles', () => {
                 .then((res) => {
                     expect(res.body.total_count).toBe(11)
                     expect(res.body.comments).toMatchObject([{
-                                                            comment_id: 3,
-                                                            body: 'Replacing the quiet elegance of the dark suit and tie with the casual indifference of these muted earth tones is a form of fashion suicide, but, uh, call me crazy — onyou it works.',
+                                                            comment_id: 18,
+                                                            body: 'This morning, I showered for nine minutes.',
                                                             article_id: 1,
-                                                            author: 'icellusedkars',
-                                                            votes: 100,
-                                                            created_at: '2020-03-01T01:13:00.000Z'
+                                                            author: 'butter_bridge',
+                                                            votes: 16,
+                                                            created_at: '2020-07-21T00:20:00.000Z'
                                                             },
                                                             {
-                                                            comment_id: 12,
-                                                            body: 'Massive intercranial brain haemorrhage',
+                                                            comment_id: 13,
+                                                            body: 'Fruit pastilles',
                                                             article_id: 1,
                                                             author: 'icellusedkars',
                                                             votes: 0,
-                                                            created_at: '2020-03-02T07:10:00.000Z'
+                                                            created_at: '2020-06-15T10:25:00.000Z'
                     }
                     ])
                 })

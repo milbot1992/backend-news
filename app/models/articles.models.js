@@ -30,7 +30,7 @@ exports.fetchArticles = (topic, sort_by = 'created_at', order = 'desc', limit = 
         }
         query += ` GROUP BY articles.author, articles.title, articles.article_id, articles.topic,
                     articles.created_at, articles.votes, articles.article_img_url
-                    ORDER BY articles.%s %s
+                    ORDER BY %s %s
                     LIMIT %s OFFSET %s;`
         
         const formattedQuery = format(query, values[0], values[1], values[2], values[3], values[4])
