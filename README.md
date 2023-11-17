@@ -12,17 +12,17 @@ This project is a News API that offers access to a variety of endpoints for retr
 Follow these steps to set up and run the API locally:
 
 ### Cloning the repository
-git clone https://github.com/milbot1992/backend-news
+```git clone https://github.com/milbot1992/backend-news```
 
 ### Install dependencies
-- npm install
+```npm install```
 
 ### Seed local database
-- npm run setup-dbs
-- npm run seed
+```npm run setup-dbs```
+```npm run seed```
 
 ### Run tests
-- npm test
+```npm test```
 
 ### Setting Up Environment Variables
 
