@@ -19,6 +19,7 @@ Follow these steps to set up and run the API locally:
 
 ### Seed local database
 ```npm run setup-dbs```
+
 ```npm run seed```
 
 ### Run tests
